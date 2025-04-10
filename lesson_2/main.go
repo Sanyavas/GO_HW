@@ -19,13 +19,24 @@ func FibonacciIterative(n int) int {
 func FibonacciRecursive(n int) int {
 	// Функція вираховує і повертає n-не число фібоначчі
 	// Імплементація з використанням рекурсії
-	return 0
+	if n <= 1 {
+		return n
+	}
+	return FibonacciRecursive(n-1) + FibonacciRecursive(n-2)
 }
 
 func IsPrime(n int) bool {
 	// Функція повертає `true` якщо число `n` - просте.
 	// Інакше функція повертає `false`
-	return false
+	if n <= 1 {
+		return false
+	}
+	for i := 2; i*i <= n; i++ {
+		if n%i == 0 {
+			return false
+		}
+	}
+	return true
 }
 
 func IsBinaryPalindrome(n int) bool {
@@ -36,7 +47,15 @@ func IsBinaryPalindrome(n int) bool {
 	// Число 7 (111) - паліндром, повертаємо `true`
 	// Число 5 (101) - паліндром, повертаємо `true`
 	// Число 6 (110) - не є паліндромом, повертаємо `false`
-	return false
+	binary_dig := fmt.Sprintf("%b", n)
+	fmt.Printf("Binary of %d is %s\n", n, binary_dig)
+
+	for i := 0; i < len(binary_dig)/2; i++ {
+		if binary_dig[i] != binary_dig[len(binary_dig)-1-i] {
+			return false
+		}
+	}
+	return true
 }
 
 func ValidParentheses(s string) bool {
@@ -48,7 +67,27 @@ func ValidParentheses(s string) bool {
 	//    "[{}]" - правильно
 	//    "[{]}" - не правильно
 	// 4. Кожна закриваюча дужка має відповідну відкриваючу дужку
-	return false
+
+	stack := []rune{}
+	pairs := map[rune]rune{
+		')': '(',
+		']': '[',
+		'}': '{',
+	}
+
+	for _, ch := range s {
+		switch ch {
+		case '(', '[', '{':
+			stack = append(stack, ch) // додаємо відкриту дужку
+		case ')', ']', '}':
+			if len(stack) == 0 || stack[len(stack)-1] != pairs[ch] {
+				return false // або стек пустий, або верхня дужка не відповідає
+			}
+			stack = stack[:len(stack)-1] // видаляємо відкриту дужку
+		}
+	}
+
+	return len(stack) == 0 // якщо стек порожній — усі дужки закриті
 }
 
 func Increment(num string) int {
@@ -59,5 +98,9 @@ func Increment(num string) int {
 }
 
 func main() {
-	fmt.Print(FibonacciIterative(10))
+	fmt.Println(FibonacciIterative(9))
+	fmt.Println(FibonacciRecursive(8))
+	fmt.Println(IsPrime(7))
+	fmt.Println(IsBinaryPalindrome(334))
+	fmt.Println(ValidParentheses("{({}[][[)]])}"))
 }
